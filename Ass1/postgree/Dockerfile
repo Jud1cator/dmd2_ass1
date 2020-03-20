@@ -1,3 +1,4 @@
 FROM postgres:12
-
-ADD ./restore.sql /docker-entrypoint-initdb.d
+COPY . /postgree
+RUN chown -R postgres:postgres /postgree
+ADD ./init_dump.sh /docker-entrypoint-initdb.d

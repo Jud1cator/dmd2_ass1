@@ -1,0 +1,20 @@
+#!/usr/bin/python3
+from transfer_data import *
+import query_1, query_2, query_3, query_4, query_5
+
+
+def main():
+    print("Establishing connections...", end=" ")
+    mongo, postgres = create_dbs()
+    print("Success")
+    transfer(mongo, postgres)
+    print()
+    query_1.run()
+    query_2.run()
+    query_3.run()
+    query_4.run()
+    query_5.run()
+
+
+if __name__ == '__main__':
+    main()
