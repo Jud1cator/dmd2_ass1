@@ -1,0 +1,20 @@
+version: '3.3'
+
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: dvdrental
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      VOLUMES: 
+        - ./restore.sql:/postgree/restore.sql
+
+  mongo:
+    image: mongo:4.0
+
+  ass1:
+    build: .
+    depends_on:
+      - postgres
+      - mongo
