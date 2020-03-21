@@ -46,13 +46,14 @@ two different categories during the current year\n")
                 elif not film_categories[inventory_film[inv]] in diff_categories[cust_id]:
                     diff_categories[cust_id].append(film_categories[inventory_film[inv]])
 
-    out = []
+    out = {}
     for cust_id in diff_categories:
         if len(diff_categories[cust_id]) >= 2:
             for c in db.customer.find({'customer_id': cust_id}):
-                out.append(c['first_name'] + ' ' + c['last_name'])
+                out[c['customer_id']] = c['first_name'] + ' ' + c['last_name']
 
-    report = pd.DataFrame(out)
+    report = pd.DataFrame.from_dict(out, orient='index', columns=['name']).sort_index()
+    report.index.name = 'id'
     print(report)
 
     print("Run time: %.3f s\n" % (time.time() - start_time))

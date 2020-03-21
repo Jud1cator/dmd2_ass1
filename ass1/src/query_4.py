@@ -21,9 +21,7 @@ sets of movies. Create a metric (any) to assess to which degree a movie is a goo
     print("Customer name: " + usr['first_name']
         + ' ' + usr['last_name'])
 
-    inv_film = {}
-    for inv in db.inventory.find():
-        inv_film.update({inv['inventory_id']: inv['film_id']})
+    inv_film = {inv['inventory_id']: inv['film_id'] for inv in db.inventory.find()}
 
     cust_watch = {}
     for rent in db.rental.find():
@@ -43,27 +41,27 @@ sets of movies. Create a metric (any) to assess to which degree a movie is a goo
         for f in sample_set:
             if f in cust_watch[cust]:
                 m += 1
-        good_recomendators.update({cust: m})
+        good_recomendators[cust] = m
 
         if max_m < m and len(cust_watch[cust]) >= len(cust_watch[usr_id]):
             max_m = m
 
     good_films = {}
-    for cust in good_recomendators:
-        if good_recomendators[cust] != max_m: continue
-        rec_set = [film for film in cust_watch[cust] if not film in sample_set]
-        for film in rec_set:
-            if film in good_films:
-                good_films[film] += 1
-            else:
-                good_films.update({film: 1})
-
-    max_m = max(good_films.values())
+    max_m = 0
+    rec = None
+    for film in db.film.find():
+        if film['film_id'] in sample_set: continue
+        good_films[film['film_id']] = 0
+        for gr in good_recomendators:
+            if film['film_id'] in cust_watch[gr]:
+                good_films[film['film_id']] += good_recomendators[gr]
+        if max_m < good_films[film['film_id']]:
+            max_m = good_films[film['film_id']]
+            rec = film['film_id']
 
     rec_set = [film for film in good_films if good_films[film] == max_m]
     rec = db.film.find({'film_id': random.choice(rec_set)})[0]['title']
     print('Recommended movie: ' + rec)
-    print('Degree of recommendation: ' + str(max_m))
+    print('Metrics value: ' + str(max_m))
 
-    print("Run time: %.3f s" % (time.time() - start_time))
-    print()
+    print("Run time: %.3f s\n" % (time.time() - start_time))

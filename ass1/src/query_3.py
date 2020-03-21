@@ -25,15 +25,21 @@ the number of times it has been rented by a customer.\n")
         else:
             inv_times_rented.update({iid: 1})
 
+    film_categories = {fc['film_id']: fc['category_id']
+                    for fc in db.film_category.find()}
+    category_names = {c['category_id']: c['name']
+                    for c in db.category.find()}
+    film_titles = {f['film_id']: f['title']
+                for f in db.film.find()}
+                
     raw_report = []
     for film in film_inventory:
         times_rented = 0
         for inv in film_inventory[film]:
             if inv in inv_times_rented:
                 times_rented += inv_times_rented[inv]
-        category_id = db.film_category.find({'film_id': film})[0]['category_id']
-        category_name = db.category.find({'category_id': category_id})[0]['name']
-        film_title = db.film.find({'film_id': film})[0]['title']
+        category_name = category_names[film_categories[film]]
+        film_title = film_titles[film]
         raw_report.append([film_title, category_name, times_rented])
 
     report = pd.DataFrame(raw_report)

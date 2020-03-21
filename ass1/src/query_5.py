@@ -15,7 +15,7 @@ certain actor\n(choose one, this should be fixed) and any other actor.\n")
     db = client['dvdrental']
 
     choosen_actor = random.choice(list(db.actor.find()))['actor_id']
-
+    print("Randomly choosen actor id: " + str(choosen_actor), end="\n\n")
 
     film_actors = {}
     for fa in db.film_actor.find():
@@ -51,5 +51,6 @@ certain actor\n(choose one, this should be fixed) and any other actor.\n")
                                     columns=['Bacon number']).sort_index()
     report.index.name = 'Actor id'
     print(report)
+    report.to_csv("D:\\docs\\bacon_degree.csv")
 
     print("Run time: %.3f s\n" % (time.time() - start_time))
