@@ -1,0 +1,18 @@
+version: '3.3'
+
+services:
+  postgres:
+    build: ./postgree
+    environment:
+      POSTGRES_DB: dvdrental
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  mongo:
+    image: mongo
+
+  ass1:
+    build: ./src
+    depends_on:
+      - postgres
+      - mongo
